@@ -1,0 +1,18 @@
+# action.yml
+name: 'Packet Creator'
+description: 'Create a Packet Project and a new Project API Key for that project'
+inputs:
+  projectName:
+    description: 'Packet Project Name'
+    required: false
+    default: ''
+outputs:
+  projectID:
+    description: 'The UUID of the created project'
+  projectName:
+    description: 'The name of the created project'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  env:
+    PROJECT_NAME: ${{ inputs.projectName }}
