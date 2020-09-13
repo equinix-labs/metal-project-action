@@ -1,5 +1,5 @@
 # action.yml
-name: 'Packet Creator'
+name: 'Packet Project'
 description: 'Create a Packet Project and a new Project API Key for that project'
 inputs:
   projectName:
