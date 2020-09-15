@@ -40,12 +40,20 @@ func main() {
 	}
 
 	// TODO(displague) any way to create a project token through the API?
+	// If so, make sure to ::add-mask:: before adding it to the output or env
 
 	for k, v := range map[string]string{
 		"projectID":   project.ID,
 		"projectName": project.Name,
 	} {
 		fmt.Printf("::set-output name=%s::%s\n", k, v)
+	}
+
+	for k, v := range map[string]string{
+		"PACKET_PROJECT_ID":   project.ID,
+		"PACKET_PROJECT_NAME": project.Name,
+	} {
+		fmt.Printf("::set-env name=%s::%s\n", k, v)
 	}
 }
 
