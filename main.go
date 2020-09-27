@@ -2,68 +2,62 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
+	"log"
 	"os"
-	"time"
 
-	"github.com/packethost/packngo"
+	action "github.com/displague/packet-project-action/internal"
 )
 
 func main() {
-	// PACKET_AUTH_TOKEN should be already set
-	// the client will use it by default (?)
-	client, err := packngo.NewClient()
-	if err != nil {
-		panic(err)
-	}
-
 	projectName := os.Getenv("INPUTS_PROJECTNAME")
 	if projectName == "" {
-		// TODO(displague) use a random string
-		sha := os.Getenv("GITHUB_SHA")
-		if sha == "" {
-			sha = RandomString(16)
+		projectName = action.GenProjectName(os.Getenv("GITHUB_SHA"))
+	}
+
+	apiToken := os.Getenv("INPUTS_USERTOKEN")
+	if apiToken == "" {
+		apiToken = os.Getenv("PACKET_AUTH_TOKEN")
+		if apiToken == "" {
+			log.Fatal("Either `with.userToken` or `env.PACKET_AUTH_TOKEN` must be supplied")
 		}
-		projectName = "GHACTION-" + sha
 
-		// TODO(displague) no way to set a description? is "customdata" a description?
-		// projectDescription := os.Getenv("GITHUB_SERVER_URL") + "/" + os.Getenv("GITHUB_REPOSITORY") + " " + os.Getenv("GITHUB_SHA")
 	}
-
-	createOpts := &packngo.ProjectCreateRequest{
-		Name: projectName,
-	}
-
-	project, _, err := client.Projects.Create(createOpts)
+	a, err := action.NewAction(apiToken, os.Getenv("INPUTS_ORGANIZATIONID"), projectName)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
+	}
+
+	p, err := a.CreateProject()
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	// TODO(displague) any way to create a project token through the API?
 	// If so, make sure to ::add-mask:: before adding it to the output or env
 
+	for _, v := range map[string]string{
+
+		"projectToken":         p.APIToken,
+		"projectSSHPrivateKey": p.SSHPrivateKey,
+	} {
+		fmt.Printf("::add-mask::%s\n", v)
+	}
+
 	for k, v := range map[string]string{
-		"projectID":   project.ID,
-		"projectName": project.Name,
+		"projectID":            p.Project.ID,
+		"projectName":          p.Project.Name,
+		"projectToken":         p.APIToken,
+		"projectSSHPrivateKey": p.SSHPrivateKey,
 	} {
 		fmt.Printf("::set-output name=%s::%s\n", k, v)
 	}
 
 	for k, v := range map[string]string{
-		"PACKET_PROJECT_ID":   project.ID,
-		"PACKET_PROJECT_NAME": project.Name,
+		"PACKET_PROJECT_ID":      p.Project.ID,
+		"PACKET_PROJECT_NAME":    p.Project.Name,
+		"PACKET_PROJECT_TOKEN":   p.APIToken,
+		"PACKET_SSH_PRIVATE_KEY": p.SSHPrivateKey,
 	} {
 		fmt.Printf("::set-env name=%s::%s\n", k, v)
 	}
-}
-
-func RandomString(size int) string {
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-
-	const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
-	result := make([]byte, size)
-	for i := range result {
-		result[i] = chars[r.Intn(len(chars))]
-	}
-	return string(result)
 }

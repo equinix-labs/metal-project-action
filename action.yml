@@ -3,14 +3,21 @@ name: 'Packet Project'
 description: 'Create a Packet Project and a new Project API Key for that project'
 inputs:
   projectName:
-    description: 'Packet Project Name'
+    description: 'Packet Project Name. A name will be generated from the Git SHA if not provided.'
     required: false
     default: ''
+  organizationId:
+    description: 'Packet Organization ID for the Project. The default organization for the user will be used by the API if this is not provided.'
+    required: false
 outputs:
   projectID:
     description: 'The UUID of the created project'
   projectName:
     description: 'The name of the created project'
+  projectAPIKey:
+    description: 'A Project API key restricted to the new project'
+  projectSSHKey:
+    description: 'A private SSH key (content) authorized as root on devices created in the created project.'
 runs:
   using: 'docker'
   image: 'Dockerfile'
