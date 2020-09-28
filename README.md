@@ -2,6 +2,12 @@
 
 Experimental Github Action for creating [Packet](https://packet.com) Projects.
 
+Give a Packet User API Token, a new Project will be created, preconfigured with an SSH Key and API Key which can be used in subsequent actions.
+
+Clean up the project with the [Packet Sweeper Action](https://github.com/displague/packet-sweeper-action).
+
+See the [Packet Actions Example](https://github.com/displague/packet-actions-example) for usage examples.
+
 ## Input
 
 With | Environment variable | Description
