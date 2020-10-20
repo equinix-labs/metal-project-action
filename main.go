@@ -53,10 +53,10 @@ func main() {
 	}
 
 	for k, v := range map[string]string{
-		"PACKET_PROJECT_ID":      p.Project.ID,
-		"PACKET_PROJECT_NAME":    p.Project.Name,
-		"PACKET_PROJECT_TOKEN":   p.APIToken,
-		"PACKET_SSH_PRIVATE_KEY": p.SSHPrivateKey,
+		"METAL_PROJECT_ID":      p.Project.ID,
+		"METAL_PROJECT_NAME":    p.Project.Name,
+		"METAL_PROJECT_TOKEN":   p.APIToken,
+		"METAL_SSH_PRIVATE_KEY": p.SSHPrivateKey,
 	} {
 		fmt.Printf("::set-env name=%s::%s\n", k, v)
 	}
