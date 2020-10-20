@@ -3,8 +3,8 @@
 Experimental Github Action for creating [Equinix Metal](https://metal.equinix.com) Projects.
 
 > :bulb: See also:
-> * [metal-sweeper](https://github.com/displague/metal-sweeper-action) action
-> * [metal-examples](https://github.com/displague/metal-actions-example) examples
+> * [equinix-metal-sweeper](https://github.com/displague/metal-sweeper-action) action
+> * [equinix-metal-examples](https://github.com/displague/metal-actions-example) examples
 
 Given a Equinix Metal User API Token, a new Project will be created, preconfigured with an SSH Key and API Key which can be used in subsequent actions.
 
