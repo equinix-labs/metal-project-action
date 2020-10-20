@@ -1,13 +1,13 @@
 # action.yml
-name: 'Packet Project'
-description: 'Create a Packet Project and a new Project API Key for that project'
+name: 'Metal Project'
+description: 'Create an Equinix Metal and a new Project API Key for that project'
 inputs:
   projectName:
-    description: 'Packet Project Name. A name will be generated from the Git SHA if not provided.'
+    description: 'Equinix Metal Project Name. A name will be generated from the Git SHA if not provided.'
     required: false
     default: ''
   organizationId:
-    description: 'Packet Organization ID for the Project. The default organization for the user will be used by the API if this is not provided.'
+    description: 'Equinix Metal Organization ID for the Project. The default organization for the user will be used by the API if this is not provided.'
     required: false
 outputs:
   projectID:

@@ -34,7 +34,7 @@ type Project struct {
 
 // NewAction returns an action with a Packngo client
 func NewAction(apiToken, organizationID, label string) (*action, error) {
-	client := packngo.NewClientWithAuth("packet-project-action", apiToken, nil)
+	client := packngo.NewClientWithAuth("metal-project-action", apiToken, nil)
 
 	return &action{
 		organizationID: organizationID,

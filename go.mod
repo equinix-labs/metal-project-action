@@ -1,4 +1,4 @@
-module github.com/displague/packet-project-action
+module github.com/displague/metal-project-action
 
 go 1.14
 

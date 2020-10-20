@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	action "github.com/displague/packet-project-action/internal"
+	action "github.com/displague/metal-project-action/internal"
 )
 
 func main() {
