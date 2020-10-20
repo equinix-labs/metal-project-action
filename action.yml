@@ -1,5 +1,5 @@
 # action.yml
-name: 'Metal Project'
+name: 'Equinix Metal Project'
 description: 'Create an Equinix Metal and a new Project API Key for that project'
 inputs:
   projectName:
