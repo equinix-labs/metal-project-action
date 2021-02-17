@@ -16,7 +16,7 @@ See the [Equinix Metal Actions Example](https://github.com/displague/metal-actio
 
 With | Environment variable | Description
 --- | --- | ---
-`userToken` | `PACKET_AUTH_TOKEN` | (required) A Equinix Metal User API Token
+`userToken` | `METAL_AUTH_TOKEN` | (required) A Equinix Metal User API Token
 `projectName` | - | Name for the project, API key, and SSH Key. A generated name will be used if not supplied.
 `organizationID` | - | Organization ID that the Project will be created under. If not supplied, the default organization for the API User will be used.
 
@@ -28,4 +28,3 @@ Output Name | Environment Variable | Description
 `projectName` | `METAL_PROJECT_NAME` | the generated (or supplied) name of the Equinix Metal Project
 `projectToken` | `METAL_PROJECT_TOKEN` | a new Equinix Metal Project API Token bound to this project
 `projectSSHPrivateKey` | `METAL_SSH_PRIVATE_KEY`  | a new SSH Private Key that can be used to authenticate to devices in this project
-
