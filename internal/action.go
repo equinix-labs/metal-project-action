@@ -6,6 +6,7 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
+	"io/ioutil"
 	"log"
 	mrand "math/rand"
 	"time"
@@ -43,7 +44,11 @@ func NewAction(apiToken, organizationID, label string) (*action, error) {
 	}, nil
 }
 
-func (a *action) CreateProject() (*Project, error) {
+// CreateProject
+//
+// Create an Equinix Metal project with API keys and project SSH Keys generated at {filename}
+// and {filename}.pub
+func (a *action) CreateProject(filename string) (*Project, error) {
 	// TODO(displague) can we use a project description with more fields?
 	//projectDescription := os.Getenv("GITHUB_SERVER_URL") + "/" + os.Getenv("GITHUB_REPOSITORY") + " " + os.Getenv("GITHUB_SHA")
 	createOpts := &packngo.ProjectCreateRequest{
@@ -59,7 +64,9 @@ func (a *action) CreateProject() (*Project, error) {
 	p := &Project{Project: project}
 
 	for _, f := range []func(*packngo.Client) error{
-		p.createSSHKey,
+		func(c *packngo.Client) error {
+			return p.createSSHKey(c, filename)
+		},
 		p.createAPIKey,
 	} {
 		if err := f(a.client); err != nil {
@@ -130,14 +137,27 @@ func encodePrivateKeyToPEM(privateKey *rsa.PrivateKey) []byte {
 	return privatePEM
 }
 
-func (p *Project) createSSHKey(c *packngo.Client) error {
+// writeKeyFile writes keys to a file
+func writeKeyFile(key []byte, filename string) error {
+	return ioutil.WriteFile(filename, key, 0600)
+}
+
+func (p *Project) createSSHKey(c *packngo.Client, filename string) error {
 	key, err := generatePrivateKey()
 	if err != nil {
 		return err
 	}
 
+	if writeKeyFile(encodePrivateKeyToPEM(key), filename); err != nil {
+		return err
+	}
+
 	pubKey, err := generatePublicKey(&key.PublicKey)
 	if err != nil {
+		return err
+	}
+
+	if err = writeKeyFile(pubKey, filename+".pub"); err != nil {
 		return err
 	}
 

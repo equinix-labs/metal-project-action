@@ -27,4 +27,5 @@ Output Name | Environment Variable | Description
 `projectID` | `METAL_PROJECT_ID` | a new Equinix Metal Project ID
 `projectName` | `METAL_PROJECT_NAME` | the generated (or supplied) name of the Equinix Metal Project
 `projectToken` | `METAL_PROJECT_TOKEN` | a new Equinix Metal Project API Token bound to this project
-`projectSSHPrivateKey` | `METAL_SSH_PRIVATE_KEY`  | a new SSH Private Key that can be used to authenticate to devices in this project
+`projectSSHPrivateKey` | `METAL_SSH_PRIVATE_KEY_FILE`  | a new SSH Private Key that can be used to authenticate to devices in this project
+`projectSSHPublicKey` | `METAL_SSH_PUBLIC_KEY_FILE`  | a new SSH Public Key that can be used to authenticate to devices in this project
