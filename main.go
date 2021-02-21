@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/url"
 	"os"
@@ -28,13 +29,28 @@ func main() {
 		log.Fatal(err)
 	}
 
-	p, err := a.CreateProject()
+	// Use GH Runner temp directory
+	tmp := os.Getenv("RUNNER_TEMP")
+	if tmp == "" {
+		tmp = os.TempDir()
+	}
+
+	f, err := ioutil.TempFile(tmp, "id_rsa_")
+	if err != nil {
+		log.Fatal(err)
+	}
+	sshPrivateFile := f.Name()
+	sshPublicFile := sshPrivateFile + ".pub"
+
+	err = f.Close()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// TODO(displague) any way to create a project token through the API?
-	// If so, make sure to ::add-mask:: before adding it to the output or env
+	p, err := a.CreateProject(sshPrivateFile)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	envFile, err := os.OpenFile(os.Getenv("GITHUB_ENV"),
 		os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
@@ -44,27 +60,27 @@ func main() {
 	defer envFile.Close()
 
 	for _, v := range map[string]string{
-
-		"projectToken":         p.APIToken,
-		"projectSSHPrivateKey": p.SSHPrivateKey,
+		"projectToken": p.APIToken,
 	} {
 		fmt.Printf("::add-mask::%s\n", url.QueryEscape(v))
 	}
 
 	for k, v := range map[string]string{
-		"projectID":            p.Project.ID,
-		"projectName":          p.Project.Name,
-		"projectToken":         p.APIToken,
-		"projectSSHPrivateKey": p.SSHPrivateKey,
+		"projectID":                p.Project.ID,
+		"projectName":              p.Project.Name,
+		"projectToken":             p.APIToken,
+		"projectSSHPrivateKeyFile": sshPrivateFile,
+		"projectSSHPublicKeyFile":  sshPublicFile,
 	} {
 		fmt.Printf("::set-output name=%s::%s\n", k, url.QueryEscape(v))
 	}
 
 	for k, v := range map[string]string{
-		"METAL_PROJECT_ID":      p.Project.ID,
-		"METAL_PROJECT_NAME":    p.Project.Name,
-		"METAL_PROJECT_TOKEN":   p.APIToken,
-		"METAL_SSH_PRIVATE_KEY": p.SSHPrivateKey,
+		"METAL_PROJECT_ID":           p.Project.ID,
+		"METAL_PROJECT_NAME":         p.Project.Name,
+		"METAL_PROJECT_TOKEN":        p.APIToken,
+		"METAL_SSH_PRIVATE_KEY_FILE": sshPrivateFile,
+		"METAL_SSH_PUBLIC_KEY_FILE":  sshPublicFile,
 	} {
 		fmt.Fprintf(envFile, "%s<<EOS\n%s\nEOS\n", k, v)
 	}
