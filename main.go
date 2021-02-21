@@ -71,6 +71,7 @@ func main() {
 		"projectToken":             p.APIToken,
 		"projectSSHPrivateKeyFile": sshPrivateFile,
 		"projectSSHPublicKeyFile":  sshPublicFile,
+		"organizationID":           p.Project.Organization.ID,
 	} {
 		fmt.Printf("::set-output name=%s::%s\n", k, url.QueryEscape(v))
 	}
@@ -81,6 +82,7 @@ func main() {
 		"METAL_PROJECT_TOKEN":        p.APIToken,
 		"METAL_SSH_PRIVATE_KEY_FILE": sshPrivateFile,
 		"METAL_SSH_PUBLIC_KEY_FILE":  sshPublicFile,
+		"METAL_ORGANIZATION_ID":      p.Project.Organization.ID,
 	} {
 		fmt.Fprintf(envFile, "%s<<EOS\n%s\nEOS\n", k, v)
 	}
