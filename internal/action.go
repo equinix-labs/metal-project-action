@@ -56,6 +56,7 @@ func (a *action) CreateProject(filename string) (*Project, error) {
 		OrganizationID: a.organizationID,
 	}
 
+	log.Println("Creating Project")
 	project, _, err := a.client.Projects.Create(createOpts)
 	if err != nil {
 		return nil, err
@@ -63,6 +64,7 @@ func (a *action) CreateProject(filename string) (*Project, error) {
 
 	p := &Project{Project: project}
 
+	log.Println("Creating Keys")
 	for _, f := range []func(*packngo.Client) error{
 		func(c *packngo.Client) error {
 			return p.createSSHKey(c, filename)
@@ -141,8 +143,9 @@ func encodePrivateKeyToPEM(privateKey *rsa.PrivateKey) []byte {
 func writeKeyFile(key []byte, filename string) error {
 	err := ioutil.WriteFile(filename, key, 0600)
 	if err != nil {
-		log.Println("Wrote", filename)
+		log.Println("Could not write", err)
 	}
+	log.Println("Wrote", filename)
 	return err
 }
 
@@ -187,6 +190,7 @@ func (p *Project) createAPIKey(c *packngo.Client) error {
 		ProjectID:   p.Project.ID,
 	}
 
+	log.Println("Creating Project API Key")
 	apiKey, _, err := c.APIKeys.Create(createOpts)
 	if err != nil {
 		return err

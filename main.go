@@ -26,7 +26,7 @@ func main() {
 	}
 	a, err := action.NewAction(apiToken, os.Getenv("INPUTS_ORGANIZATIONID"), projectName)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Could not create client action", err)
 	}
 
 	// Use GH Runner temp directory. TempFile uses TempDir if empty.
@@ -34,25 +34,25 @@ func main() {
 
 	f, err := ioutil.TempFile(tmp, "id_rsa_")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Could not create temp file", err)
 	}
 	sshPrivateFile := f.Name()
 	sshPublicFile := sshPrivateFile + ".pub"
 
 	err = f.Close()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Could not close temp file", err)
 	}
 
 	p, err := a.CreateProject(sshPrivateFile)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Could not create project", err)
 	}
 
 	envFile, err := os.OpenFile(os.Getenv("GITHUB_ENV"),
 		os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Could not open env file", err)
 	}
 	defer envFile.Close()
 
