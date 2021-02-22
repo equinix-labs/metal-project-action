@@ -29,11 +29,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// Use GH Runner temp directory
+	// Use GH Runner temp directory. TempFile uses TempDir if empty.
 	tmp := os.Getenv("RUNNER_TEMP")
-	if tmp == "" {
-		tmp = os.TempDir()
-	}
 
 	f, err := ioutil.TempFile(tmp, "id_rsa_")
 	if err != nil {

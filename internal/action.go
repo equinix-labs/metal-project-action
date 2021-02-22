@@ -139,7 +139,11 @@ func encodePrivateKeyToPEM(privateKey *rsa.PrivateKey) []byte {
 
 // writeKeyFile writes keys to a file
 func writeKeyFile(key []byte, filename string) error {
-	return ioutil.WriteFile(filename, key, 0600)
+	err := ioutil.WriteFile(filename, key, 0600)
+	if err != nil {
+		log.Println("Wrote", filename)
+	}
+	return err
 }
 
 func (p *Project) createSSHKey(c *packngo.Client, filename string) error {
