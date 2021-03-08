@@ -1,19 +1,13 @@
 package main
 
 import (
+	b64 "encoding/base64"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/url"
 	"os"
 
 	action "github.com/displague/metal-project-action/internal"
-)
-
-var (
-	// SSHKeyPathEnv is where the SSH keys will be written.
-	// The temp directory (per TempDir) will be used if not set.
-	SSHKeyPathEnv = "GITHUB_WORKSPACE"
 )
 
 func main() {
@@ -35,24 +29,21 @@ func main() {
 		log.Fatal("Could not create client action", err)
 	}
 
-	tmp := os.Getenv(SSHKeyPathEnv)
-
-	f, err := ioutil.TempFile(tmp, "id_rsa_")
 	if err != nil {
 		log.Fatal("Could not create temp file", err)
 	}
-	sshPrivateFile := f.Name()
-	sshPublicFile := sshPrivateFile + ".pub"
 
-	err = f.Close()
 	if err != nil {
 		log.Fatal("Could not close temp file", err)
 	}
 
-	p, err := a.CreateProject(sshPrivateFile)
+	p, err := a.CreateProject()
 	if err != nil {
 		log.Fatal("Could not create project", err)
 	}
+
+	sshPrivateBase64 := b64.StdEncoding.EncodeToString([]byte(p.SSHPrivateKey))
+	sshPublicKey := b64.StdEncoding.EncodeToString([]byte(p.SSHPublicKey))
 
 	envFile, err := os.OpenFile(os.Getenv("GITHUB_ENV"),
 		os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
@@ -62,29 +53,30 @@ func main() {
 	defer envFile.Close()
 
 	for _, v := range map[string]string{
-		"projectToken": p.APIToken,
+		"projectToken":               p.APIToken,
+		"projectSSHPrivateKeyBase64": sshPrivateBase64,
 	} {
 		fmt.Printf("::add-mask::%s\n", url.QueryEscape(v))
 	}
 
 	for k, v := range map[string]string{
-		"projectID":                p.Project.ID,
-		"projectName":              p.Project.Name,
-		"projectToken":             p.APIToken,
-		"projectSSHPrivateKeyFile": sshPrivateFile,
-		"projectSSHPublicKeyFile":  sshPublicFile,
-		"organizationID":           p.Project.Organization.ID,
+		"projectID":                  p.Project.ID,
+		"projectName":                p.Project.Name,
+		"projectToken":               p.APIToken,
+		"projectSSHPrivateKeyBase64": sshPrivateBase64,
+		"projectSSHPublicKey":        sshPublicKey,
+		"organizationID":             p.Project.Organization.ID,
 	} {
 		fmt.Printf("::set-output name=%s::%s\n", k, url.QueryEscape(v))
 	}
 
 	for k, v := range map[string]string{
-		"METAL_PROJECT_ID":           p.Project.ID,
-		"METAL_PROJECT_NAME":         p.Project.Name,
-		"METAL_PROJECT_TOKEN":        p.APIToken,
-		"METAL_SSH_PRIVATE_KEY_FILE": sshPrivateFile,
-		"METAL_SSH_PUBLIC_KEY_FILE":  sshPublicFile,
-		"METAL_ORGANIZATION_ID":      p.Project.Organization.ID,
+		"METAL_PROJECT_ID":             p.Project.ID,
+		"METAL_PROJECT_NAME":           p.Project.Name,
+		"METAL_PROJECT_TOKEN":          p.APIToken,
+		"METAL_SSH_PRIVATE_KEY_BASE64": sshPrivateBase64,
+		"METAL_SSH_PUBLIC_KEY":         sshPublicKey,
+		"METAL_ORGANIZATION_ID":        p.Project.Organization.ID,
 	} {
 		fmt.Fprintf(envFile, "%s<<EOS\n%s\nEOS\n", k, v)
 	}

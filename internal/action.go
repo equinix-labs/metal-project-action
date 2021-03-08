@@ -6,7 +6,6 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
-	"io/ioutil"
 	"log"
 	mrand "math/rand"
 	"time"
@@ -30,6 +29,7 @@ type Project struct {
 	Project *packngo.Project
 
 	SSHPrivateKey string
+	SSHPublicKey  string
 	APIToken      string
 }
 
@@ -46,9 +46,8 @@ func NewAction(apiToken, organizationID, label string) (*action, error) {
 
 // CreateProject
 //
-// Create an Equinix Metal project with API keys and project SSH Keys generated at {filename}
-// and {filename}.pub
-func (a *action) CreateProject(filename string) (*Project, error) {
+// Create an Equinix Metal project with API keys and project SSH Keys
+func (a *action) CreateProject() (*Project, error) {
 	// TODO(displague) can we use a project description with more fields?
 	//projectDescription := os.Getenv("GITHUB_SERVER_URL") + "/" + os.Getenv("GITHUB_REPOSITORY") + " " + os.Getenv("GITHUB_SHA")
 	createOpts := &packngo.ProjectCreateRequest{
@@ -66,9 +65,7 @@ func (a *action) CreateProject(filename string) (*Project, error) {
 
 	log.Println("Creating Keys")
 	for _, f := range []func(*packngo.Client) error{
-		func(c *packngo.Client) error {
-			return p.createSSHKey(c, filename)
-		},
+		p.createSSHKey,
 		p.createAPIKey,
 	} {
 		if err := f(a.client); err != nil {
@@ -139,32 +136,14 @@ func encodePrivateKeyToPEM(privateKey *rsa.PrivateKey) []byte {
 	return privatePEM
 }
 
-// writeKeyFile writes keys to a file
-func writeKeyFile(key []byte, filename string) error {
-	err := ioutil.WriteFile(filename, key, 0600)
-	if err != nil {
-		log.Println("Could not write", err)
-	}
-	log.Println("Wrote", filename)
-	return err
-}
-
-func (p *Project) createSSHKey(c *packngo.Client, filename string) error {
+func (p *Project) createSSHKey(c *packngo.Client) error {
 	key, err := generatePrivateKey()
 	if err != nil {
 		return err
 	}
 
-	if writeKeyFile(encodePrivateKeyToPEM(key), filename); err != nil {
-		return err
-	}
-
 	pubKey, err := generatePublicKey(&key.PublicKey)
 	if err != nil {
-		return err
-	}
-
-	if err = writeKeyFile(pubKey, filename+".pub"); err != nil {
 		return err
 	}
 
@@ -181,6 +160,7 @@ func (p *Project) createSSHKey(c *packngo.Client, filename string) error {
 
 	privateKeyBytes := encodePrivateKeyToPEM(key)
 	p.SSHPrivateKey = string(privateKeyBytes)
+	p.SSHPublicKey = string(pubKey)
 	return nil
 }
 

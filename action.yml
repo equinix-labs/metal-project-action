@@ -16,8 +16,10 @@ outputs:
     description: 'The name of the created project'
   projectAPIKey:
     description: 'A Project API key restricted to the new project'
-  projectSSHKey:
-    description: 'A private SSH key (content) authorized as root on devices created in the created project.'
+  projectSSHPrivateKeyBase64:
+    description: 'A private SSH key (base64 encoded to preserve new lines) authorized as root on devices created in the created project.'
+  projectSSHPublicKey:
+    description: 'A public SSH key authorized as root on devices created in the created project.'
 runs:
   using: 'docker'
   image: 'Dockerfile'
