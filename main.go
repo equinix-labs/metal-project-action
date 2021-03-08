@@ -10,6 +10,12 @@ import (
 	action "github.com/displague/metal-project-action/internal"
 )
 
+var (
+	// SSHKeyPathEnv is where the SSH keys will be written.
+	// The temp directory (per TempDir) will be used if not set.
+	SSHKeyPathEnv = "GITHUB_WORKSPACE"
+)
+
 func main() {
 	projectName := os.Getenv("INPUTS_PROJECTNAME")
 	if projectName == "" {
@@ -29,8 +35,7 @@ func main() {
 		log.Fatal("Could not create client action", err)
 	}
 
-	// Use GH Runner temp directory. TempFile uses TempDir if empty.
-	tmp := os.Getenv("RUNNER_TEMP")
+	tmp := os.Getenv(SSHKeyPathEnv)
 
 	f, err := ioutil.TempFile(tmp, "id_rsa_")
 	if err != nil {
