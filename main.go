@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"os"
 
-	action "github.com/displague/metal-project-action/internal"
+	action "github.com/equinix-labs/metal-project-action/internal"
 )
 
 func main() {
