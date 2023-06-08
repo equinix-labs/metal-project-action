@@ -59,24 +59,28 @@ func main() {
 		fmt.Printf("::add-mask::%s\n", url.QueryEscape(v))
 	}
 
+	// TODO remove this when organization is mentioned in the project schema
+	organization := p.Project.AdditionalProperties["organization"].(map[string]interface{})
+	organizationId := fmt.Sprint(organization["id"])
+
 	for k, v := range map[string]string{
-		"projectID":                  p.Project.ID,
-		"projectName":                p.Project.Name,
+		"projectID":                  p.Project.GetId(),
+		"projectName":                p.Project.GetName(),
 		"projectToken":               p.APIToken,
 		"projectSSHPrivateKeyBase64": sshPrivateBase64,
 		"projectSSHPublicKey":        sshPublicKey,
-		"organizationID":             p.Project.Organization.ID,
+		"organizationID":             organizationId,
 	} {
 		fmt.Printf("::set-output name=%s::%s\n", k, url.QueryEscape(v))
 	}
 
 	for k, v := range map[string]string{
-		"METAL_PROJECT_ID":             p.Project.ID,
-		"METAL_PROJECT_NAME":           p.Project.Name,
+		"METAL_PROJECT_ID":             p.Project.GetId(),
+		"METAL_PROJECT_NAME":           p.Project.GetName(),
 		"METAL_PROJECT_TOKEN":          p.APIToken,
 		"METAL_SSH_PRIVATE_KEY_BASE64": sshPrivateBase64,
 		"METAL_SSH_PUBLIC_KEY":         sshPublicKey,
-		"METAL_ORGANIZATION_ID":        p.Project.Organization.ID,
+		"METAL_ORGANIZATION_ID":        organizationId,
 	} {
 		fmt.Fprintf(envFile, "%s<<EOS\n%s\nEOS\n", k, v)
 	}

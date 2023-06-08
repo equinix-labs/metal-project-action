@@ -2,31 +2,35 @@
 package action
 
 import (
+	"context"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
+	"fmt"
 	"log"
 	mrand "math/rand"
 	"time"
 
-	"github.com/packethost/packngo"
+	metal "github.com/equinix-labs/metal-go/metal/v1"
 	"golang.org/x/crypto/ssh"
 )
 
+var version = "dev"
+
 const (
 	bitSize = 4096
+	uaFmt   = "gh-action-metal-project/%s %s"
 )
 
 type action struct {
-	client *packngo.Client
-
+	client         *metal.APIClient
 	label          string
 	organizationID string
 }
 
 type Project struct {
-	Project *packngo.Project
+	Project *metal.Project
 
 	SSHPrivateKey string
 	SSHPublicKey  string
@@ -35,7 +39,10 @@ type Project struct {
 
 // NewAction returns an action with a Packngo client
 func NewAction(apiToken, organizationID, label string) (*action, error) {
-	client := packngo.NewClientWithAuth("metal-project-action", apiToken, nil)
+	config := metal.NewConfiguration()
+	config.AddDefaultHeader("X-Auth-Token", apiToken)
+	config.UserAgent = fmt.Sprintf(uaFmt, version, config.UserAgent)
+	client := metal.NewAPIClient(config)
 
 	return &action{
 		organizationID: organizationID,
@@ -50,13 +57,16 @@ func NewAction(apiToken, organizationID, label string) (*action, error) {
 func (a *action) CreateProject() (*Project, error) {
 	// TODO(displague) can we use a project description with more fields?
 	//projectDescription := os.Getenv("GITHUB_SERVER_URL") + "/" + os.Getenv("GITHUB_REPOSITORY") + " " + os.Getenv("GITHUB_SHA")
-	createOpts := &packngo.ProjectCreateRequest{
-		Name:           a.label,
-		OrganizationID: a.organizationID,
+	createOpts := metal.ProjectCreateFromRootInput{
+		Name: a.label,
+	}
+
+	if a.organizationID != "" {
+		createOpts.OrganizationId = &a.organizationID
 	}
 
 	log.Println("Creating Project")
-	project, _, err := a.client.Projects.Create(createOpts)
+	project, _, err := a.client.ProjectsApi.CreateProject(context.Background()).ProjectCreateFromRootInput(createOpts).Execute()
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +74,7 @@ func (a *action) CreateProject() (*Project, error) {
 	p := &Project{Project: project}
 
 	log.Println("Creating Keys")
-	for _, f := range []func(*packngo.Client) error{
+	for _, f := range []func(*metal.APIClient) error{
 		p.createSSHKey,
 		p.createAPIKey,
 	} {
@@ -136,24 +146,24 @@ func encodePrivateKeyToPEM(privateKey *rsa.PrivateKey) []byte {
 	return privatePEM
 }
 
-func (p *Project) createSSHKey(c *packngo.Client) error {
+func (p *Project) createSSHKey(c *metal.APIClient) error {
 	key, err := generatePrivateKey()
 	if err != nil {
 		return err
 	}
 
-	pubKey, err := generatePublicKey(&key.PublicKey)
+	pubKeyBytes, err := generatePublicKey(&key.PublicKey)
 	if err != nil {
 		return err
 	}
+	pubKey := string(pubKeyBytes)
 
-	createOpts := &packngo.SSHKeyCreateRequest{
-		Label:     p.Project.Name,
-		ProjectID: p.Project.ID,
-		Key:       string(pubKey),
+	createOpts := metal.SSHKeyCreateInput{
+		Label: p.Project.Name,
+		Key:   &pubKey,
 	}
 
-	_, _, err = c.SSHKeys.Create(createOpts)
+	_, _, err = c.SSHKeysApi.CreateProjectSSHKey(context.Background(), p.Project.GetId()).SSHKeyCreateInput(createOpts).Execute()
 	if err != nil {
 		return err
 	}
@@ -164,19 +174,18 @@ func (p *Project) createSSHKey(c *packngo.Client) error {
 	return nil
 }
 
-func (p *Project) createAPIKey(c *packngo.Client) error {
-	createOpts := &packngo.APIKeyCreateRequest{
+func (p *Project) createAPIKey(c *metal.APIClient) error {
+	createOpts := metal.AuthTokenInput{
 		Description: p.Project.Name,
-		ProjectID:   p.Project.ID,
 	}
 
 	log.Println("Creating Project API Key")
-	apiKey, _, err := c.APIKeys.Create(createOpts)
+	apiKey, _, err := c.AuthenticationApi.CreateProjectAPIKey(context.Background(), p.Project.GetId()).AuthTokenInput(createOpts).Execute()
 	if err != nil {
 		return err
 	}
 
-	p.APIToken = apiKey.Token
+	p.APIToken = apiKey.GetToken()
 	return nil
 }
 
