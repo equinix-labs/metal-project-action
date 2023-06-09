@@ -52,6 +52,13 @@ func main() {
 	}
 	defer envFile.Close()
 
+	outputFile, err := os.OpenFile(os.Getenv("GITHUB_OUTPUT"),
+		os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Fatal("Could not open output file", err)
+	}
+	defer outputFile.Close()
+
 	for _, v := range map[string]string{
 		"projectToken":               p.APIToken,
 		"projectSSHPrivateKeyBase64": sshPrivateBase64,
@@ -71,7 +78,7 @@ func main() {
 		"projectSSHPublicKey":        sshPublicKey,
 		"organizationID":             organizationId,
 	} {
-		fmt.Printf("::set-output name=%s::%s\n", k, url.QueryEscape(v))
+		fmt.Fprintf(outputFile, "%s=%s\n", k, url.QueryEscape(v))
 	}
 
 	for k, v := range map[string]string{
