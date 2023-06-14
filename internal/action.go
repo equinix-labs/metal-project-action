@@ -65,8 +65,10 @@ func (a *action) CreateProject() (*Project, error) {
 		createOpts.OrganizationId = &a.organizationID
 	}
 
+	includes := []string{"organization.id"}
+
 	log.Println("Creating Project")
-	project, _, err := a.client.ProjectsApi.CreateProject(context.Background()).ProjectCreateFromRootInput(createOpts).Execute()
+	project, _, err := a.client.ProjectsApi.CreateProject(context.Background()).ProjectCreateFromRootInput(createOpts).Include(includes).Execute()
 	if err != nil {
 		return nil, err
 	}
