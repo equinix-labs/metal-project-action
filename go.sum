@@ -1,7 +1,9 @@
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/equinix-labs/metal-go v0.8.0 h1:s5mDkQREvsor4KGe9+6Wzu/Rx0N2KZWhWVRfI+R2S74=
-github.com/equinix-labs/metal-go v0.8.0/go.mod h1:SmxCklxW+KjmBLVMdEXgtFO5gD5/b4N0VxcNgUYbOH4=
+github.com/equinix-labs/metal-go v0.9.0 h1:eEkX7jRY06RblH3C3yHnT0lmRbasYrD68iNwl8esLGg=
+github.com/equinix-labs/metal-go v0.9.0/go.mod h1:SmxCklxW+KjmBLVMdEXgtFO5gD5/b4N0VxcNgUYbOH4=
+github.com/equinix-labs/metal-go v0.9.1-0.20230615170029-6f8b25231753 h1:M070R6NsKR3xBimc0yzRPQ8yY6Z/LeTHXte8lARPT1Y=
+github.com/equinix-labs/metal-go v0.9.1-0.20230615170029-6f8b25231753/go.mod h1:SmxCklxW+KjmBLVMdEXgtFO5gD5/b4N0VxcNgUYbOH4=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.4.0/go.mod h1:YvHI0jy2hoMjB+UWwv71VJQ9isScKT/TqJzVSSt89Yw=
