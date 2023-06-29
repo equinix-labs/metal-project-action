@@ -18,7 +18,7 @@ func main() {
 
 	apiToken := os.Getenv("INPUT_USERTOKEN")
 	if apiToken == "" {
-		log.Fatal("Either `with.userToken` or `env.METAL_AUTH_TOKEN` must be supplied")
+		log.Fatal("You must provide an auth token in `with.userToken` must be supplied")
 	}
 
 	a, err := action.NewAction(apiToken, os.Getenv("INPUT_ORGANIZATIONID"), projectName)
