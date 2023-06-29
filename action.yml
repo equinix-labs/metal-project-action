@@ -10,8 +10,8 @@ inputs:
     description: 'Equinix Metal Organization ID for the Project. The default organization for the user will be used by the API if this is not provided.'
     required: false
   userToken:
-    description: 'The user API key to use when creating the project.  Required if `env.METAL_AUTH_TOKEN` is not specified'
-    required: false
+    description: 'The user API key to use when creating the project.'
+    required: true
 outputs:
   projectID:
     description: 'The UUID of the created project'

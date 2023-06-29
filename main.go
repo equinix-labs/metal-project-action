@@ -11,20 +11,17 @@ import (
 )
 
 func main() {
-	projectName := os.Getenv("INPUTS_PROJECTNAME")
+	projectName := os.Getenv("INPUT_PROJECTNAME")
 	if projectName == "" {
 		projectName = action.GenProjectName(os.Getenv("GITHUB_SHA"))
 	}
 
-	apiToken := os.Getenv("INPUTS_USERTOKEN")
+	apiToken := os.Getenv("INPUT_USERTOKEN")
 	if apiToken == "" {
-		apiToken = os.Getenv("METAL_AUTH_TOKEN")
-		if apiToken == "" {
-			log.Fatal("Either `with.userToken` or `env.METAL_AUTH_TOKEN` must be supplied")
-		}
-
+		log.Fatal("Either `with.userToken` or `env.METAL_AUTH_TOKEN` must be supplied")
 	}
-	a, err := action.NewAction(apiToken, os.Getenv("INPUTS_ORGANIZATIONID"), projectName)
+
+	a, err := action.NewAction(apiToken, os.Getenv("INPUT_ORGANIZATIONID"), projectName)
 	if err != nil {
 		log.Fatal("Could not create client action", err)
 	}
@@ -75,16 +72,5 @@ func main() {
 		"organizationID":             p.Project.Organization.GetId(),
 	} {
 		fmt.Fprintf(outputFile, "%s=%s\n", k, url.QueryEscape(v))
-	}
-
-	for k, v := range map[string]string{
-		"METAL_PROJECT_ID":             p.Project.GetId(),
-		"METAL_PROJECT_NAME":           p.Project.GetName(),
-		"METAL_PROJECT_TOKEN":          p.APIToken,
-		"METAL_SSH_PRIVATE_KEY_BASE64": sshPrivateBase64,
-		"METAL_SSH_PUBLIC_KEY":         sshPublicKey,
-		"METAL_ORGANIZATION_ID":        p.Project.Organization.GetId(),
-	} {
-		fmt.Fprintf(envFile, "%s<<EOS\n%s\nEOS\n", k, v)
 	}
 }
