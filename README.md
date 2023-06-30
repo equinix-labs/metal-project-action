@@ -1,6 +1,8 @@
 # metal-project-action
 
-Experimental Github Action for creating [Equinix Metal](https://metal.equinix.com) Projects.
+[![Experimental](https://img.shields.io/badge/Stability-Experimental-red.svg)](experimental-statement.md#experimental-statement)
+
+Experimental GitHub Action for creating [Equinix Metal](https://metal.equinix.com) Projects.
 
 > :bulb: See also:
 >
@@ -31,3 +33,7 @@ See the [Equinix Metal Actions Example](https://github.com/equinix-labs/metal-ac
 | `projectSSHPrivateKeyBase64` | a new SSH Private Key (base64 encoded) that can be used to authenticate to devices in this project |
 | `projectSSHPublicKey`        | a new SSH Public Key that can be used to authenticate to devices in this project                   |
 | `organizationID`             | ID of the Organization responsible for the project.                                                |
+
+## Support
+
+This repository is [Experimental](experimental-statement.md) meaning that it's based on untested ideas or techniques and not yet established or finalized or involves a radically new and innovative style! This means that support is best effort (at best!) and we strongly encourage you to NOT use this in production.
