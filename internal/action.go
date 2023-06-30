@@ -9,8 +9,6 @@ import (
 	"encoding/pem"
 	"fmt"
 	"log"
-	mrand "math/rand"
-	"time"
 
 	metal "github.com/equinix-labs/metal-go/metal/v1"
 	"golang.org/x/crypto/ssh"
@@ -56,7 +54,7 @@ func NewAction(apiToken, organizationID, label string) (*action, error) {
 // Create an Equinix Metal project with API keys and project SSH Keys
 func (a *action) CreateProject() (*Project, error) {
 	// TODO(displague) can we use a project description with more fields?
-	//projectDescription := os.Getenv("GITHUB_SERVER_URL") + "/" + os.Getenv("GITHUB_REPOSITORY") + " " + os.Getenv("GITHUB_SHA")
+	// projectDescription := os.Getenv("GITHUB_SERVER_URL") + "/" + os.Getenv("GITHUB_REPOSITORY") + " " + os.Getenv("GITHUB_SHA")
 	createOpts := metal.ProjectCreateFromRootInput{
 		Name: a.label,
 	}
@@ -172,7 +170,7 @@ func (p *Project) createSSHKey(c *metal.APIClient) error {
 
 	privateKeyBytes := encodePrivateKeyToPEM(key)
 	p.SSHPrivateKey = string(privateKeyBytes)
-	p.SSHPublicKey = string(pubKey)
+	p.SSHPublicKey = pubKey
 	return nil
 }
 
@@ -192,12 +190,12 @@ func (p *Project) createAPIKey(c *metal.APIClient) error {
 }
 
 func RandomString(size int) string {
-	r := mrand.New(mrand.NewSource(time.Now().UnixNano()))
-
 	const chars = "abcdefghijklmnopqrstuvwxyz0123456789"
+	lenChars := len(chars)
 	result := make([]byte, size)
+	rand.Read(result) // generates len(result) random bytes
 	for i := range result {
-		result[i] = chars[r.Intn(len(chars))]
+		result[i] = chars[int(result[i])%lenChars]
 	}
 	return string(result)
 }
