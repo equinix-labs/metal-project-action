@@ -2,6 +2,8 @@
 
 [![Experimental](https://img.shields.io/badge/Stability-Experimental-red.svg)](https://github.com/equinix-labs/equinix-labs/blob/main/experimental-statement.md#experimental-statement)
 
+[![GitHub Super-Linter](https://github.com/equinix-labs/metal-project-action/actions/workflows/superlinter.yml/badge.svg)](https://github.com/marketplace/actions/super-linter)
+
 Experimental GitHub Action for creating [Equinix Metal](https://metal.equinix.com) Projects.
 
 > :bulb: See also:
