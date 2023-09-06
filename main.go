@@ -54,6 +54,7 @@ func main() {
 	outputFile, err := os.OpenFile(os.Getenv("GITHUB_OUTPUT"),
 		os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
+		//nolint:gocritic
 		log.Fatal("Could not open output file", err)
 	}
 	defer outputFile.Close()

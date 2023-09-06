@@ -37,6 +37,8 @@ type Project struct {
 }
 
 // NewAction returns an action with a metal-go client
+//
+//nolint:revive
 func NewAction(apiToken, organizationID, label string, enableBGP bool) (*action, error) {
 	config := metal.NewConfiguration()
 	config.AddDefaultHeader("X-Auth-Token", apiToken)
