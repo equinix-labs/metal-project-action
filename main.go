@@ -21,7 +21,9 @@ func main() {
 		log.Fatal("You must provide an auth token in `with.userToken` must be supplied")
 	}
 
-	a, err := action.NewAction(apiToken, os.Getenv("INPUT_ORGANIZATIONID"), projectName)
+	enableBGP := os.Getenv("INPUT_ENABLEBGP") == "true"
+
+	a, err := action.NewAction(apiToken, os.Getenv("INPUT_ORGANIZATIONID"), projectName, enableBGP)
 	if err != nil {
 		log.Fatal("Could not create client action", err)
 	}

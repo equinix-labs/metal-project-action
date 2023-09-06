@@ -12,6 +12,10 @@ inputs:
   userToken:
     description: 'The user API key to use when creating the project.'
     required: true
+  enableBGP:
+    description: 'Set this to "true" in order to enable BGP on the project'
+    required: false
+    default: 'false'
 outputs:
   projectID:
     description: 'The UUID of the created project'
