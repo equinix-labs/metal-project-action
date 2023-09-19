@@ -25,6 +25,7 @@ type action struct {
 	client         *metal.APIClient
 	label          string
 	organizationID string
+	enableBGP      bool
 }
 
 type Project struct {
@@ -35,8 +36,10 @@ type Project struct {
 	APIToken      string
 }
 
-// NewAction returns an action with a Packngo client
-func NewAction(apiToken, organizationID, label string) (*action, error) {
+// NewAction returns an action with a metal-go client
+//
+//nolint:revive
+func NewAction(apiToken, organizationID, label string, enableBGP bool) (*action, error) {
 	config := metal.NewConfiguration()
 	config.AddDefaultHeader("X-Auth-Token", apiToken)
 	config.UserAgent = fmt.Sprintf(uaFmt, version, config.UserAgent)
@@ -46,6 +49,7 @@ func NewAction(apiToken, organizationID, label string) (*action, error) {
 		organizationID: organizationID,
 		label:          label,
 		client:         client,
+		enableBGP:      enableBGP,
 	}, nil
 }
 
@@ -71,6 +75,21 @@ func (a *action) CreateProject() (*Project, error) {
 		return nil, err
 	}
 
+	if a.enableBGP {
+		log.Println("Enabling BGP for project")
+		// TODO support setting a BGP password?
+		bgpConfigRequest := metal.BgpConfigRequestInput{
+			Asn:            65000,
+			DeploymentType: "local",
+		}
+
+		_, err := a.client.BGPApi.RequestBgpConfig(context.Background(), project.GetId()).BgpConfigRequestInput(bgpConfigRequest).Execute()
+
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	p := &Project{Project: project}
 
 	log.Println("Creating Keys")
@@ -79,7 +98,7 @@ func (a *action) CreateProject() (*Project, error) {
 		p.createAPIKey,
 	} {
 		if err := f(a.client); err != nil {
-			return nil, err
+			return p, err
 		}
 	}
 

@@ -21,7 +21,9 @@ func main() {
 		log.Fatal("You must provide an auth token in `with.userToken` must be supplied")
 	}
 
-	a, err := action.NewAction(apiToken, os.Getenv("INPUT_ORGANIZATIONID"), projectName)
+	enableBGP := os.Getenv("INPUT_ENABLEBGP") == "true"
+
+	a, err := action.NewAction(apiToken, os.Getenv("INPUT_ORGANIZATIONID"), projectName, enableBGP)
 	if err != nil {
 		log.Fatal("Could not create client action", err)
 	}
@@ -52,6 +54,7 @@ func main() {
 	outputFile, err := os.OpenFile(os.Getenv("GITHUB_OUTPUT"),
 		os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
+		//nolint:gocritic
 		log.Fatal("Could not open output file", err)
 	}
 	defer outputFile.Close()
