@@ -4,6 +4,8 @@ github.com/equinix-labs/metal-go v0.18.0 h1:lzMqg6MQu25D/1nAO3qSlPZK1pENhcMKoEzc
 github.com/equinix-labs/metal-go v0.18.0/go.mod h1:SmxCklxW+KjmBLVMdEXgtFO5gD5/b4N0VxcNgUYbOH4=
 github.com/equinix-labs/metal-go v0.20.0 h1:FJNYjB3igBBaWtd+w95Or1WC48uAuALLVEacz3WXFus=
 github.com/equinix-labs/metal-go v0.20.0/go.mod h1:SmxCklxW+KjmBLVMdEXgtFO5gD5/b4N0VxcNgUYbOH4=
+github.com/equinix-labs/metal-go v0.21.0 h1:AWmciCaO+tjNKCKB0r4pMHpoGenzAqua3TbXA5VjZE8=
+github.com/equinix-labs/metal-go v0.21.0/go.mod h1:SmxCklxW+KjmBLVMdEXgtFO5gD5/b4N0VxcNgUYbOH4=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/objx v0.4.0/go.mod h1:YvHI0jy2hoMjB+UWwv71VJQ9isScKT/TqJzVSSt89Yw=
