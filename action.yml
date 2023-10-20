@@ -5,29 +5,29 @@ description: >
 inputs:
   projectName:
     description: >
-     Equinix Metal Project Name. A name will be generated from the Git SHA if
-     not provided.
+      Equinix Metal Project Name. A name will be generated from the Git SHA if
+      not provided.
     required: false
-    default: ''
+    default: ""
   organizationID:
     description: >
       Equinix Metal Organization ID for the Project. The default organization
       for the user will be used by the API if this is not provided.
     required: false
   userToken:
-    description: 'The user API key to use when creating the project.'
+    description: "The user API key to use when creating the project."
     required: true
   enableBGP:
     description: 'Set this to "true" in order to enable BGP on the project'
     required: false
-    default: 'false'
+    default: "false"
 outputs:
   projectID:
-    description: 'The UUID of the created project'
+    description: "The UUID of the created project"
   projectName:
-    description: 'The name of the created project'
+    description: "The name of the created project"
   projectToken:
-    description: 'A Project API key restricted to the new project'
+    description: "A Project API key restricted to the new project"
   projectSSHPrivateKeyBase64:
     description: >
       A private SSH key (base64 encoded to preserve new lines) authorized as
@@ -37,10 +37,10 @@ outputs:
       A public SSH key authorized as root on devices created in the created
       project.
   organizationID:
-    description: 'The Equinix Metal Organization ID for the created project'
+    description: "The Equinix Metal Organization ID for the created project"
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
+  using: "docker"
+  image: "Dockerfile"
 branding:
-  icon: 'folder-plus'
-  color: 'green'
+  icon: "folder-plus"
+  color: "green"
